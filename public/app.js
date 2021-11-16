@@ -35,8 +35,9 @@ map.setMaxBounds(bounds);
 // an arbitrary start will always be the same
 // only the end or destination will change
 const start = [-122.662323, 45.523751];
-const end = [-122.662323, 50.523751]
-// this is where the code for the next step will go
+// destination point
+const end = [-122.662323, 45.513751];
+// -----------------------------------------------------------------
 // create a function to make a directions request
 async function getRoute(end) {
     // make a directions request using cycling profile
@@ -83,7 +84,7 @@ async function getRoute(end) {
     }
     // add turn instructions here at the end
 }
-
+// ------------------------------------------------------------------------
 map.on('load', () => {
     // make an initial directions request that
     // starts and ends at the same location
@@ -116,5 +117,54 @@ map.on('load', () => {
     });
     // this is where the code from the next step will go
 });
-
-//getRoute(start);
+// ------------------------------------------------------
+// add destenation by clicking on the map
+map.on('click', (event) => {
+    const coords = Object.keys(event.lngLat).map((key) => event.lngLat[key]);
+    const end = {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'Point',
+            coordinates: coords
+          }
+        }
+      ]
+    };
+    if (map.getLayer('end')) {
+      map.getSource('end').setData(end);
+    } else {
+      map.addLayer({
+        id: 'end',
+        type: 'circle',
+        source: {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: [
+              {
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                  type: 'Point',
+                  coordinates: coords
+                }
+              }
+            ]
+          }
+        },
+        paint: {
+          'circle-radius': 10,
+          'circle-color': '#f30'
+        }
+      });
+    }
+    getRoute(coords);
+  });
+// -----------------------------------------------------------
+/// setInterval(() => {
+    // getRoute(end);
+// }, 1000);
