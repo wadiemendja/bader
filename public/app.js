@@ -1,8 +1,3 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.3.0/firebase-app.js";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDkIFaZiP2I8F6LY6LHdlMPhs6aUDyZobI",
@@ -15,12 +10,12 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
-const ref= firebase.databse().ref('/');
+const ref= firebase.database().ref('/');
 
 ref.once('value', (snap)=> {
-    console.log(snap);
+    console.log(snap.val());
 });
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoid2FkaWVtZW5kamEiLCJhIjoiY2t3MXd2cXU1MGZrdTMxbW96YzBqbjNvayJ9.3uSDABakcWuPDeiBh12pIQ';
@@ -122,4 +117,4 @@ map.on('load', () => {
     // this is where the code from the next step will go
 });
 
-getRoute(start);
+//getRoute(start);
