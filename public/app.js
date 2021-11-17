@@ -12,11 +12,21 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-const ref= firebase.database().ref('/');
-
-ref.once('value', (snap)=> {
-    console.log(snap.val());
+const ref = firebase.database().ref('/task1/');
+// an arbitrary start will always be the same
+// only the end or destination will change
+let startX, startY, destX ,destY;
+await ref.once('value', (snap)=> {
+    const data = snap.val();
+    console.log(data.start.x)
+    startX = data.start.x;
+    startY = data.start.y;
+    destX = data.destination.x;
+    destY = data.destination.y;
 });
+const start = [startX, startY];
+// destination point
+const end = [destX, destY];
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoid2FkaWVtZW5kamEiLCJhIjoiY2t3MXd2cXU1MGZrdTMxbW96YzBqbjNvayJ9.3uSDABakcWuPDeiBh12pIQ';
 const map = new mapboxgl.Map({
@@ -32,11 +42,6 @@ const bounds = [
 ];
 map.setMaxBounds(bounds);
 
-// an arbitrary start will always be the same
-// only the end or destination will change
-const start = [-122.662323, 45.523751];
-// destination point
-const end = [-122.662323, 45.513751];
 // -----------------------------------------------------------------
 // create a function to make a directions request
 async function getRoute(end) {
@@ -122,48 +127,60 @@ map.on('load', () => {
 map.on('click', (event) => {
     const coords = Object.keys(event.lngLat).map((key) => event.lngLat[key]);
     const end = {
-      type: 'FeatureCollection',
-      features: [
-        {
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'Point',
-            coordinates: coords
-          }
-        }
-      ]
-    };
-    if (map.getLayer('end')) {
-      map.getSource('end').setData(end);
-    } else {
-      map.addLayer({
-        id: 'end',
-        type: 'circle',
-        source: {
-          type: 'geojson',
-          data: {
-            type: 'FeatureCollection',
-            features: [
-              {
+        type: 'FeatureCollection',
+        features: [
+            {
                 type: 'Feature',
                 properties: {},
                 geometry: {
-                  type: 'Point',
-                  coordinates: coords
+                    type: 'Point',
+                    coordinates: coords
                 }
-              }
-            ]
-          }
-        },
-        paint: {
-          'circle-radius': 10,
-          'circle-color': '#f30'
-        }
-      });
+            }
+        ]
+    };
+    if (map.getLayer('end')) {
+        map.getSource('end').setData(end);
+    } else {
+        map.addLayer({
+            id: 'end',
+            type: 'circle',
+            source: {
+                type: 'geojson',
+                data: {
+                    type: 'FeatureCollection',
+                    features: [
+                        {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'Point',
+                                coordinates: coords
+                            }
+                        }
+                    ]
+                }
+            },
+            paint: {
+                'circle-radius': 10,
+                'circle-color': '#f30'
+            }
+        });
     }
     getRoute(coords);
-  });
+});
+// -----------------------------------------------------------
+// get the sidebar and add the instructions
+// const instructions = document.getElementById('instructions');
+// const steps = data.legs[0].steps;
+
+// let tripInstructions = '';
+// for (const step of steps) {
+//   tripInstructions += `<li>${step.maneuver.instruction}</li>`;
+// }
+// instructions.innerHTML = `<p><strong>Trip duration: ${Math.floor(
+//   data.duration / 60
+// )} min 🚴 </strong></p><ol>${tripInstructions}</ol>`;
 // -----------------------------------------------------------
 /// setInterval(() => {
     // getRoute(end);
