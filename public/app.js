@@ -12,9 +12,11 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-const ref = firebase.database().ref('/task1/');
+const ref = firebase.database().ref('/task1/start');
 // an arbitrary start will always be the same
 // only the end or destination will change
+// ref.update({ x: -122.662323, y: 45.523751 });
+
 let startX, startY, destX ,destY;
 await ref.once('value', (snap)=> {
     const data = snap.val();
