@@ -1,25 +1,25 @@
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDkIFaZiP2I8F6LY6LHdlMPhs6aUDyZobI",
-    authDomain: "badermq-3c0a7.firebaseapp.com",
-    databaseURL: "https://badermq-3c0a7-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "badermq-3c0a7",
-    storageBucket: "badermq-3c0a7.appspot.com",
-    messagingSenderId: "291492201083",
-    appId: "1:291492201083:web:6c513331abef537d43d8de"
+    apiKey: "AIzaSyBFy40fjEMRLcsuqMp4ko-mFF47cKmwheA",
+    authDomain: "badermapbox.firebaseapp.com",
+    databaseURL: "https://badermapbox-default-rtdb.firebaseio.com",
+    projectId: "badermapbox",
+    storageBucket: "badermapbox.appspot.com",
+    messagingSenderId: "752048233454",
+    appId: "1:752048233454:web:48037a00c2a993d2f84cff"
 };
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-const ref = firebase.database().ref('/task1/start');
+const ref = firebase.database().ref('/task1/');
 // an arbitrary start will always be the same
 // only the end or destination will change
 // ref.update({ x: -122.662323, y: 45.523751 });
-
-let startX, startY, destX ,destY;
-await ref.once('value', (snap)=> {
+let startX, startY, destX, destY;
+await ref.once('value', (snap) => {
     const data = snap.val();
+    console.log(data);
     console.log(data.start.x)
     startX = data.start.x;
     startY = data.start.y;
@@ -123,6 +123,39 @@ map.on('load', () => {
         }
     });
     // this is where the code from the next step will go
+    map.addSource('route', {
+        'type': 'geojson',
+        'data': {
+            'type': 'Feature',
+            'properties': {},
+            'geometry': {
+                'type': 'LineString',
+                'coordinates': [
+                    [-122.483696, 37.833818],
+                    [-122.483482, 37.833174],
+                    [-122.483396, 37.8327],
+                    [-122.483568, 37.832056],
+                    [-122.48404, 37.831141],
+                    [-122.48404, 37.830497],
+                    [-122.483482, 37.82992],
+                    [-122.483568, 37.829548],
+                    [-122.48507, 37.829446],
+                    [-122.4861, 37.828802],
+                    [-122.486958, 37.82931],
+                    [-122.487001, 37.830802],
+                    [-122.487516, 37.831683],
+                    [-122.488031, 37.832158],
+                    [-122.488889, 37.832971],
+                    [-122.489876, 37.832632],
+                    [-122.490434, 37.832937],
+                    [-122.49125, 37.832429],
+                    [-122.491636, 37.832564],
+                    [-122.492237, 37.833378],
+                    [-122.493782, 37.833683]
+                ]
+            }
+        }
+    });
 });
 // ------------------------------------------------------
 // add destenation by clicking on the map
