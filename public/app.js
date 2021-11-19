@@ -167,9 +167,14 @@ map.on('click', (event) => {
     }
     getRoute(coords);
     // moving to destination
+    let firstLoop = true;
     setInterval(() => {
-        map.removeLayer("point");
-        start[0] += .001
+        if (firstLoop) {
+            map.removeLayer("point");
+            firstLoop = false;
+        }
+        if (start[0] > coords[0]) start[0] -= .001; else if (start[0] < coords[0]) start[0] += .001;
+        if (start[1] > coords[1]) start[1] -= .001; else if (start[1] < coords[1]) start[1] += .001;
         getRoute(start);
         const layerID = 'layer' + Math.floor(Math.random() * 1000);
         map.addLayer({
