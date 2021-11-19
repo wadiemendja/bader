@@ -12,7 +12,7 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-const ref = firebase.database().ref('/task1/');
+const ref = firebase.database().ref('/task/');
 // an arbitrary start will always be the same
 // only the end or destination will change
 // ref.update({ x: -122.662323, y: 45.523751 });
@@ -23,12 +23,8 @@ await ref.once('value', (snap) => {
     console.log(data.start.x)
     startX = data.start.x;
     startY = data.start.y;
-    destX = data.destination.x;
-    destY = data.destination.y;
 });
 const start = [startX, startY];
-// destination point
-const end = [destX, destY];
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoid2FkaWVtZW5kamEiLCJhIjoiY2t3MXd2cXU1MGZrdTMxbW96YzBqbjNvayJ9.3uSDABakcWuPDeiBh12pIQ';
 const map = new mapboxgl.Map({
@@ -38,11 +34,11 @@ const map = new mapboxgl.Map({
     zoom: 12
 });
 // set the bounds of the map
-const bounds = [
-    [-123.069003, 45.395273],
-    [-122.303707, 45.612333]
-];
-map.setMaxBounds(bounds);
+// const bounds = [
+//     [-123.069003, 45.395273],
+//     [-122.303707, 45.612333]
+// ];
+// map.setMaxBounds(bounds);
 
 // -----------------------------------------------------------------
 // create a function to make a directions request
@@ -170,6 +166,40 @@ map.on('click', (event) => {
         });
     }
     getRoute(coords);
+    // moving to destination
+    setInterval(() => {
+        map.removeLayer("point");
+        start[0] += .001
+        getRoute(start);
+        const layerID = 'layer' + Math.floor(Math.random() * 1000);
+        map.addLayer({
+            id: layerID,
+            type: 'circle',
+            source: {
+                type: 'geojson',
+                data: {
+                    type: 'FeatureCollection',
+                    features: [
+                        {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'Point',
+                                coordinates: start
+                            }
+                        }
+                    ]
+                }
+            },
+            paint: {
+                'circle-radius': 10,
+                'circle-color': '#3887be'
+            }
+        });
+        setTimeout(() => {
+            map.removeLayer(layerID);
+        }, 1000);
+    }, 1000);
 });
 // -----------------------------------------------------------
 // get the sidebar and add the instructions
